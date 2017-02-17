@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="vue.js"></script>
+    <style>
+        .table input{
+            width: 100%;
+            height: 40px;
+            border: 0;
+        }
+        .property input{
+            width: 40px;
+        }
+
+    </style>
+</head>
+<body>
+<div id="app">
+    <div class="property">
+        表头 行：<input v-model.number="rowNums" type="number"> 列:<input v-model.number="colNums" type="number"><br>
+        <div>
+            x: <input type="number" ref="x"> y: <input type="number" ref="y"> rowspan: <input type="number" ref="rowspanNum"> colspan: <input type="number" ref="colspanNum">
+            <button @click="merge">合并</button>
+        </div>
+
+    </div>
+    <div>
+        <table border="1" class="table" cellspacing="0">
+            <tr v-for="(row,rowIndex) in rowNums">
+                <th v-for="(col,colIndex) in cols[rowIndex]" :rowspan="rowspan[rowIndex][colIndex]" :colspan="colspan[rowIndex][colIndex]">
+                    <input type="text">
+                </th>
+            </tr>
+        </table>
+    </div>
+</div>
+<script>
+
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            rowNums: 0,
+            colNums: 0,
+            mergeData: []
+
+        },
+        beforecreate: function () {
+
+        },
+        created: function(){
+
+        },
+        computed: {
+            cols: function(){
+                var res = [];
+                for(var i=0;i<this.rowNums;i++){
+                    res.push(this.colNums);
+                }
+                for(var j=0;j<this.mergeData.length;j++){
+                    if(this.mergeData[j].rowspan>1 || this.mergeData[j].colspan>1){
+
+                        if(this.mergeData[j].rowspan>1){
+                            for(var k=1;k<this.mergeData[j].rowspan;k++){
+                                res[parseInt(this.mergeData[j].x)+k]--;
+                            }
+                        }else{
+                            res[parseInt(this.mergeData[j].x)] -=  (this.mergeData[j].colspan - 1);
+                        }
+                    }
+                }
+                return res;
+            },
+            rowspan: function(){
+                var res = [];
+                for(var i=0;i<this.rowNums;i++){
+                    res.push([]);
+                    for(var j=0;j<this.colNums;j++){
+                        res[i].push(0)
+                    }
+                }
+                for(var i=0;i<this.mergeData.length;i++){
+                    if(this.mergeData[i].rowspan > 1){
+                        res[this.mergeData[i].x][this.mergeData[i].y] = this.mergeData[i].rowspan;
+                    }
+                }
+                return res;
+            },
+            colspan: function(){
+                var res = [];
+                for(var i=0;i<this.rowNums;i++){
+                    res.push([]);
+                    for(var j=0;j<this.colNums;j++){
+                        res[i].push(0)
+                    }
+                }
+                for(var i=0;i<this.mergeData.length;i++){
+                    if(this.mergeData[i].colspan > 1){
+                        res[this.mergeData[i].x][this.mergeData[i].y] = this.mergeData[i].colspan;
+                    }
+                }
+                return res;
+            }
+        },
+        watch: {
+            mergeData: function(newValue, oldValue){
+
+            }
+        },
+        methods: {
+            merge: function(){
+                    var temp = {};
+                    temp.x = this.$refs.x.value;
+                    temp.y = this.$refs.y.value;
+                    temp.rowspan = this.$refs.rowspanNum.value;
+                    temp.colspan = this.$refs.colspanNum.value;
+                    this.mergeData.push(temp);
+
+            }
+        }
+
+    })
+
+
+</script>
+</body>
+</html>

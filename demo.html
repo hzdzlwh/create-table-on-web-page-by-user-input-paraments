@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#create').click(function () {
+
+                var headRowNum = $('#headRowNum').val();
+                var headColNum = $('#headColNum').val();
+                var bodyRowNum = $('#bodyrownum').val();
+                var bodyColNum = $('#bodycolnum').val();
+
+                for(var i=0; i<headRowNum; i++){
+
+                }
+
+
+            })
+        })
+    </script>
+</head>
+<body>
+    <div>
+        <div id="head_property">
+            表头：
+            行：<input id="headRowNum" type="text">
+            列：<input id="headColNum" type="text">
+        </div>
+        <div id="body_property">
+            表体：
+            行：<input id="bodyRowNum" type="text">
+            列：<input id="bodyColNum" type="text">
+        </div>
+        <button id="create">创建</button>
+    </div>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
