@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="vue.js"></script>
+    <style>
+        .table input{
+            width: 100%;
+            height: 40px;
+            border: 0;
+        }
+        .property input{
+            width: 40px;
+        }
+
+    </style>
+</head>
+<body>
+<div id="app">
+    <div class="property">
+        表头 行：<input v-model.number="rowNums" type="number"> 列:<input v-model.number="colNums" type="number"><br>
+        <div>
+            x: <input type="number" ref="x"> y: <input type="number" ref="y"> rowspan: <input type="number" ref="rowspanNum"> colspan: <input type="number" ref="colspanNum">
+            <button @click="merge">合并</button>
+        </div>
+        <button @click="create">创建</button>
+
+    </div>
+    <div>
+        <table border="1" class="table" cellspacing="0">
+            <tr v-for="(row,rowIndex) in rowNums">
+                <th v-for="item in cols[rowIndex]" :rowspan="item.rowspan" :colspan="item.colspan">
+                    <input type="text">
+                </th>
+            </tr>
+        </table>
+    </div>
+</div>
+<script>
+
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            rowNums: 0,
+            colNums: 0,
+            mergeData: [],
+            ths: []
+
+        },
+        computed: {
+            cols: function(){
+                var res = [];
+                for(var i=0;i<this.rowNums;i++){
+                    var tempArr = []
+                    for(var j=0;j<this.colNums;j++){
+                        var temp = {};
+                        temp.rowspan = 0;
+                        temp.colspan = 0;
+                        tempArr.push(temp);
+                    }
+                    res.push(tempArr);
+                }
+                for(var j=0;j<this.mergeData.length;j++){
+                    if(this.mergeData[j].rowspan>1){
+                        res[this.mergeData[j].x][this.mergeData[j].y].rowspan = this.mergeData[j].rowspan;
+                        for(var k=1;k<this.mergeData[j].rowspan;k++){
+                            res[parseInt(this.mergeData[j].x)+k].splice(parseInt(this.mergeData[j]),1);
+                        }
+                    }else{
+                        res[this.mergeData[j].x][this.mergeData[j].y].colspan = this.mergeData[j].colspan;
+                            var spliceIndex = parseInt(this.mergeData[j].y) + 1;
+                            var spliceNum = parseInt(this.mergeData[j].colspan) - 1; 
+                            res[parseInt(this.mergeData[j].x)].splice(spliceIndex,spliceNum);
+                        
+                    }
+                }
+                return res;
+            }
+            /*rowspan: function(){
+                var res = [];
+                for(var i=0;i<this.rowNums;i++){
+                    res.push([]);
+                    for(var j=0;j<this.colNums;j++){
+                        res[i].push(0)
+                    }
+                }
+                for(var i=0;i<this.mergeData.length;i++){
+                    if(this.mergeData[i].rowspan > 1){
+                        res[this.mergeData[i].x][this.mergeData[i].y] = this.mergeData[i].rowspan;
+                    }
+                }
+                return res;
+            },
+            colspan: function(){
+                var res = [];
+                for(var i=0;i<this.rowNums;i++){
+                    res.push([]);
+                    for(var j=0;j<this.colNums;j++){
+                        res[i].push(0)
+                    }
+                }
+                for(var i=0;i<this.mergeData.length;i++){
+                    if(this.mergeData[i].colspan > 1){
+                        res[this.mergeData[i].x][this.mergeData[i].y] = this.mergeData[i].colspan;
+                    }
+                }
+                return res;
+            }*/
+        },
+        methods: {
+            merge: function(){
+                    var temp = {};
+                    temp.x = this.$refs.x.value;
+                    temp.y = this.$refs.y.value;
+                    temp.rowspan = this.$refs.rowspanNum.value;
+                    temp.colspan = this.$refs.colspanNum.value;
+                    this.mergeData.push(temp);
+            },
+            create: function() {
+                for(var i=0;i<this.mergeData.length; i++){
+                    if(this.mergeData[i].rowspan > 1){
+
+                    }else{
+
+                    }
+                }
+            }
+
+        }
+
+    })
+
+
+</script>
+</body>
+</html>
